@@ -5,9 +5,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,7 +24,7 @@ import java.util.Stack;
 public class PaintView3 extends View implements View.OnTouchListener {
 
 
-
+    SparseArray<PointF> activePointers = new SparseArray<PointF>();
     LinkedList<ball> balls = new LinkedList<ball>();
     Paint paint = new Paint();
     Random random = new Random();
@@ -93,27 +95,53 @@ public class PaintView3 extends View implements View.OnTouchListener {
 
 
         //}
-
-        String test2 = String.valueOf(GlobalClassTest.redoStackCount);
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(100);
-
-        canvas.drawText(test, 200, 200, paint);
-        canvas.drawText(test2,100,200,paint);
-
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        radius = GlobalClassTest.radius;
         Log.e("test",event.toString());
-        int rand = random.nextInt();
-        balls.addLast(new ball(event.getX(),event.getY(),rand,radius));
+        radius = GlobalClassTest.radius;
+        int pointerIndex = event.getActionIndex();
+        int pointerId = event.getPointerId(pointerIndex);
+        int maskedAction = event.getActionMasked();
+
+        switch (maskedAction){
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN:{
+                PointF f = new PointF();
+                f.x = event.getX(pointerIndex);
+                f.y = event.getY(pointerIndex);
+                int rand = random.nextInt();
+                balls.addLast(new ball(f.x,f.y,rand,radius));
+                undoStack.push(new Painted(f.x,f.y,rand,radius ));
+                activePointers.put(pointerId,f);
+
+            }
+            case MotionEvent.ACTION_MOVE:{
+                for(int size = event.getPointerCount(),i = 0;
+                    i< size;i++){
+                    PointF point = activePointers.get(event.getPointerId(i));
+                    if (point != null){
+                        point.x = event.getX(i);
+                        point.y = event.getY(i);
+                        int rand = random.nextInt();
+                        balls.addLast(new ball(point.x,point.y,rand,radius));
+                        undoStack.push(new Painted(point.x,point.y,rand,radius ));
+                    }
+                }
+                break;
+            }
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_CANCEL:{
+                activePointers.remove(pointerId);
+                break;
+            }
+        }
+
+//set up get and set for radius on main activity
 
 
-        undoStack.push(new Painted(event.getX(),event.getY(),rand,radius));
-        GlobalClassTest.undoStackCount = GlobalClassTest.undoStackCount + 1;
-        test = String.valueOf(event.getPointerCount());
         invalidate();
         return true;
     }
