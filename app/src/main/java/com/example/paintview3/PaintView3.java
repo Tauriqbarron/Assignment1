@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,7 +22,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.Stack;
 
-public class PaintView3 extends View implements View.OnTouchListener {
+public class PaintView3 extends View implements View.OnTouchListener,GestureDetector.OnGestureListener {
 
 
     SparseArray<PointF> activePointers = new SparseArray<PointF>();
@@ -42,6 +43,7 @@ public class PaintView3 extends View implements View.OnTouchListener {
     public PaintView3(Context context) {
         super(context);
         setOnTouchListener(this);
+
     }
 
     public PaintView3(Context context, AttributeSet attrs) {
@@ -64,10 +66,6 @@ public class PaintView3 extends View implements View.OnTouchListener {
         int maxX = size.x;
         int maxy =size.y ; ;
         int min = 10+ radius;
-
-
-
-
 
         paint.setColor(random.nextInt());
 
@@ -96,6 +94,7 @@ public class PaintView3 extends View implements View.OnTouchListener {
 
         //}
     }
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -159,4 +158,34 @@ public class PaintView3 extends View implements View.OnTouchListener {
             invalidate();
     }
 
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
+    }
 }
