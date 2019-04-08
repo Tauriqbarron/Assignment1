@@ -31,32 +31,15 @@
         <SeekBar
             android:id="@+id/seekBar"
             style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="272dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="132dp"
-            android:layout_marginTop="40dp"
+            android:layout_width="344dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
             android:max="20"
             android:progress="10"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/Count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="64dp"
-            android:text="TextView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/gpText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="28dp"
-            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.428"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -64,41 +47,22 @@
             android:id="@+id/btnUndo"
             android:layout_width="72dp"
             android:layout_height="40dp"
-            android:layout_marginStart="256dp"
-            android:layout_marginTop="112dp"
+            android:layout_marginStart="92dp"
+            android:layout_marginTop="60dp"
             android:text="Undo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/btnRedo"
-            android:layout_width="65dp"
-            android:layout_height="38dp"
-            android:layout_marginTop="76dp"
-            android:layout_marginEnd="88dp"
+            android:layout_width="72dp"
+            android:layout_height="41dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="92dp"
             android:text="Redo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvUndoStack"
-            android:layout_width="57dp"
-            android:layout_height="14dp"
-            android:layout_marginTop="88dp"
-            android:layout_marginEnd="16dp"
-            android:text="UndoStack"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tvRedoStack"
-            android:layout_width="60dp"
-            android:layout_height="17dp"
-            android:layout_marginTop="116dp"
-            android:layout_marginEnd="16dp"
-            android:text="RedoStack"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

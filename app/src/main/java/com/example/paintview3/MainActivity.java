@@ -12,8 +12,6 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     SeekBar seekBar;
-    TextView GlobalProgress;
-    TextView Count;
     Integer radius;
     Button btnUndo;
     Button btnRedo;
@@ -30,16 +28,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         seekBar= findViewById(R.id.seekBar);
-        Count = findViewById(R.id.Count);
-        GlobalProgress = findViewById(R.id.gpText) ;
         radius = seekBar.getProgress();
         btnUndo = findViewById(R.id.btnUndo);
         btnRedo = findViewById(R.id.btnRedo);
 
         global.setRadius(radius);
 
-        GlobalProgress.setText(Integer.toString(global.getRadius()));
-        Count.setText(Integer.toString(radius));
         //Captures seek bar change and sets global variable.
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -48,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
                 int radUpdate = seekBar.getProgress();
                 global.setRadius(radUpdate);
-                GlobalProgress.setText(Integer.toString(global.getRadius()));
-                Count.setText(Integer.toString(radUpdate));
+
             }
 
             @Override
@@ -67,17 +60,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 pv.Undo();
-                int size = pv.balls.size();
-                Count.setText(String.valueOf(size));
             }
         });
         btnRedo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pv.Redo();
-                int size = pv.balls.size();
-                Count.setText(String.valueOf(size));
-
             }
         });
 

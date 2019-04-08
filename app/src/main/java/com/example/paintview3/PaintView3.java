@@ -16,17 +16,72 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Stack;
 
-public class PaintView3 extends View implements View.OnTouchListener,GestureDetector.OnGestureListener {
+public class PaintView3 extends View implements View.OnTouchListener{    private GestureDetector lpDetector;
 
+
+    private boolean isLP = false;
+    private GestureDetector.OnGestureListener lpListen = new GestureDetector.OnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            Log.e ("test","Longpress deteted");
+            float ptX = e.getX();
+            float pty = e.getY();
+            search:
+            for(ball pt: balls){
+                float ptUpperx = (pt.x + 100);
+                float ptLowerX = (pt.x - 100);
+                float ptUppery = (pt.y + 100);
+                float ptLowerY = (pt.y - 100);
+
+                if(  (ptX < (ptUpperx) && ptX > (ptLowerX))&& (pty < (ptUppery) && pty > (ptLowerY)) ){
+                             Log.e ("test","Match detected");
+                             Log.e ("test","Cycling color");
+                             pt.color = random.nextInt();
+                             break search;
+                     }
+
+            }
+            invalidate();
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return false;
+        }
+
+    };
 
     SparseArray<PointF> activePointers = new SparseArray<PointF>();
     LinkedList<ball> balls = new LinkedList<ball>();
+    LinkedList<ball> lpBalls = new LinkedList<ball>();
+
     Paint paint = new Paint();
     Random random = new Random();
 
@@ -43,23 +98,25 @@ public class PaintView3 extends View implements View.OnTouchListener,GestureDete
     public PaintView3(Context context) {
         super(context);
         setOnTouchListener(this);
-
+        setup(context);
     }
-
     public PaintView3(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
+        setup(context);
     }
-
     public PaintView3(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOnTouchListener(this);
+        setup(context);
+    }
+    public void setup(Context context){
+        lpDetector = new GestureDetector(context,lpListen);
     }
 
     @Override
-     protected  void onDraw(Canvas canvas) {
+    protected  void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         Point size = new Point();
         screen.getSize(size);
 
@@ -67,67 +124,72 @@ public class PaintView3 extends View implements View.OnTouchListener,GestureDete
         int maxy =size.y ; ;
         int min = 10+ radius;
 
-        paint.setColor(random.nextInt());
-
-        for(ball pt: balls){
-            paint.setColor(pt.color);
-            canvas.drawCircle(pt.x,pt.y,pt.radius,paint);
-        }
-       // for(ball pt: balls) {
-         //   pt.y = pt.y + (pt.directionY);
-           // if (pt.y > maxy) {
-             //   pt.directionY = up;
-            //}
-           // else if (pt.y < min) {
-            //    pt.directionY = down;
-            //}
-       // }
-        //for(ball pt: balls){
-          //  pt.x = pt.x +(pt.directionX);
-           // if(pt.x > maxX ){
-             //   pt.directionX = up;
-            //}
-            //else if(pt.x < min){
-             // pt.directionX = down;
-            //}
 
 
-        //}
+            for(ball pt: balls){
+                paint.setColor(pt.color);
+                canvas.drawCircle(pt.x,pt.y,(pt.radius + 30),paint);
+            }
+
+
     }
 
 
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        Log.e("test",event.toString());
-        radius = GlobalClassTest.radius;
+    public boolean onTouch(View v, MotionEvent event)  {
         int pointerIndex = event.getActionIndex();
         int pointerId = event.getPointerId(pointerIndex);
         int maskedAction = event.getActionMasked();
+        radius = GlobalClassTest.radius;
+        lpDetector.onTouchEvent(event);
+        int rand = random.nextInt();
+        PointF f = new PointF();
 
+
+
+
+        search:
         switch (maskedAction){
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:{
-                PointF f = new PointF();
+
                 f.x = event.getX(pointerIndex);
                 f.y = event.getY(pointerIndex);
-                int rand = random.nextInt();
-                balls.addLast(new ball(f.x,f.y,rand,radius));
-                undoStack.push(new Painted(f.x,f.y,rand,radius ));
-                activePointers.put(pointerId,f);
+                activePointers.put(pointerId, f);
 
-            }
-            case MotionEvent.ACTION_MOVE:{
-                for(int size = event.getPointerCount(),i = 0;
-                    i< size;i++){
-                    PointF point = activePointers.get(event.getPointerId(i));
-                    if (point != null){
-                        point.x = event.getX(i);
-                        point.y = event.getY(i);
-                        int rand = random.nextInt();
-                        balls.addLast(new ball(point.x,point.y,rand,radius));
-                        undoStack.push(new Painted(point.x,point.y,rand,radius ));
+                for (ball pt :balls){
+                    float pointUpperX = pt.x + 100;
+                    float pointLowerX = pt.x - 100;
+                    float pointUpperY = pt.y + 100;
+                    float pointLowerY = pt.y - 100;
+                    float pX = f.x;
+                    float pY = f.y;
+
+                    if ((pX < (pointUpperX) && pX > (pointLowerX)) && (pY < (pointUpperY) && pY > (pointLowerY))) {
+                        Log.e ("test","Inbounds");
+                        break search;
                     }
                 }
+                balls.addLast(new ball(f.x, f.y, rand, radius));
+                undoStack.push(new Painted(f.x, f.y, rand, radius));
+                break;
+            }
+            case MotionEvent.ACTION_MOVE:{
+                    for(int size = event.getPointerCount(),i = 0;
+                        i< size;i++){
+                        PointF point = activePointers.get(event.getPointerId(i));
+                        if (point != null){
+                            rand = random.nextInt();
+                            if((event.getX() >= (point.x +100) || event.getX() <= (point.x - 100))
+                                    || (event.getY() >= (point.y +100) || event.getY() <= (point.y - 100))){
+                                isLP = false;
+                                point.x = event.getX();
+                                point.y = event.getY();
+                                balls.addLast(new ball(point.x,point.y,rand,radius));
+                                undoStack.push(new Painted(point.x,point.y,rand,radius ));
+                            }
+                        }
+                    }
                 break;
             }
             case MotionEvent.ACTION_UP:
@@ -141,6 +203,7 @@ public class PaintView3 extends View implements View.OnTouchListener,GestureDete
 //set up get and set for radius on main activity
 
 
+
         invalidate();
         return true;
     }
@@ -152,40 +215,15 @@ public class PaintView3 extends View implements View.OnTouchListener,GestureDete
         invalidate();
     }
     public void Redo(){
-            Painted paint =(Painted) redoStack.peek();
-            undoStack.push(redoStack.pop());
-            balls.addLast(new ball(paint.x,paint.y,paint.color,paint.radius));
-            invalidate();
+        Painted paint =(Painted) redoStack.peek();
+        undoStack.push(redoStack.pop());
+        balls.addLast(new ball(paint.x,paint.y,paint.color,paint.radius));
+        invalidate();
     }
 
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
 
 
-    }
 
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return false;
-    }
+
+
 }
