@@ -25,12 +25,10 @@ import java.util.Stack;
 
 public class PaintView3 extends View implements View.OnTouchListener{    private GestureDetector lpDetector;
 
-
-    private boolean isLP = false;
     private GestureDetector.OnGestureListener lpListen = new GestureDetector.OnGestureListener() {
         @Override
         public boolean onDown(MotionEvent e) {
-            return false;
+            return true;
         }
 
         @Override
@@ -80,20 +78,14 @@ public class PaintView3 extends View implements View.OnTouchListener{    private
 
     SparseArray<PointF> activePointers = new SparseArray<PointF>();
     LinkedList<ball> balls = new LinkedList<ball>();
-    LinkedList<ball> lpBalls = new LinkedList<ball>();
 
     Paint paint = new Paint();
     Random random = new Random();
 
-    WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-    Display screen = wm.getDefaultDisplay();
     Stack undoStack = new Stack();
     Stack redoStack = new Stack();
-    String test ="" ;
 
     int radius = GlobalClassTest.radius;
-    int up = -7;
-    int down = 7;
 
     public PaintView3(Context context) {
         super(context);
@@ -117,13 +109,6 @@ public class PaintView3 extends View implements View.OnTouchListener{    private
     @Override
     protected  void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Point size = new Point();
-        screen.getSize(size);
-
-        int maxX = size.x;
-        int maxy =size.y ; ;
-        int min = 10+ radius;
-
 
 
             for(ball pt: balls){
@@ -137,22 +122,17 @@ public class PaintView3 extends View implements View.OnTouchListener{    private
 
     @Override
     public boolean onTouch(View v, MotionEvent event)  {
+        lpDetector.onTouchEvent(event);
+        radius = GlobalClassTest.radius;
         int pointerIndex = event.getActionIndex();
         int pointerId = event.getPointerId(pointerIndex);
         int maskedAction = event.getActionMasked();
-        radius = GlobalClassTest.radius;
-        lpDetector.onTouchEvent(event);
-        int rand = random.nextInt();
-        PointF f = new PointF();
-
-
-
-
         search:
         switch (maskedAction){
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:{
-
+                int rand = random.nextInt();
+                PointF f = new PointF();
                 f.x = event.getX(pointerIndex);
                 f.y = event.getY(pointerIndex);
                 activePointers.put(pointerId, f);
@@ -170,26 +150,81 @@ public class PaintView3 extends View implements View.OnTouchListener{    private
                         break search;
                     }
                 }
+
                 balls.addLast(new ball(f.x, f.y, rand, radius));
                 undoStack.push(new Painted(f.x, f.y, rand, radius));
+                invalidate();
                 break;
             }
             case MotionEvent.ACTION_MOVE:{
+                searchMove:
                     for(int size = event.getPointerCount(),i = 0;
-                        i< size;i++){
+                        i< size;i++) {
+
+                        int rand = random.nextInt();
+                        int pointerI = i;
+                        int pointerID = event.getPointerId(pointerI);
                         PointF point = activePointers.get(event.getPointerId(i));
-                        if (point != null){
-                            rand = random.nextInt();
-                            if((event.getX() >= (point.x +100) || event.getX() <= (point.x - 100))
-                                    || (event.getY() >= (point.y +100) || event.getY() <= (point.y - 100))){
-                                isLP = false;
-                                point.x = event.getX();
-                                point.y = event.getY();
-                                balls.addLast(new ball(point.x,point.y,rand,radius));
-                                undoStack.push(new Painted(point.x,point.y,rand,radius ));
+                        float eX = event.getX(i);
+                        float eY = event.getY(i);
+                        if (point != null) {
+                            if (pointerID == 0) {
+                                if ((eX >= (point.x + 100) || eX <= (point.x - 100))
+                                        || (eY >= (point.y + 100) || eY <= (point.y - 100))) {
+                                    random.nextInt();
+                                    point.x = event.getX(i);
+                                    point.y = event.getY(i);
+                                    balls.addLast(new ball(point.x, point.y, rand, radius));
+                                    undoStack.push(new Painted(point.x, point.y, rand, radius));
+                                }
+                            }
+                            if (pointerID == 1) {
+                                if ((eX >= (point.x + 100) || eX <= (point.x - 100))
+                                        || (eY >= (point.y + 100) || eY <= (point.y - 100))) {
+                                    random.nextInt();
+                                    point.x = event.getX(i);
+                                    point.y = event.getY(i);
+                                    balls.addLast(new ball(point.x, point.y, rand, radius));
+                                    undoStack.push(new Painted(point.x, point.y, rand, radius));
+                                }
+
+                            }
+                            if (pointerID == 2) {
+                                if ((eX >= (point.x + 100) || eX <= (point.x - 100))
+                                        || (eY >= (point.y + 100) || eY <= (point.y - 100))) {
+                                    random.nextInt();
+                                    point.x = event.getX(i);
+                                    point.y = event.getY(i);
+                                    balls.addLast(new ball(point.x, point.y, rand, radius));
+                                    undoStack.push(new Painted(point.x, point.y, rand, radius));
+                                }
+
+                            }
+                            if (pointerID == 3) {
+                                if ((eX >= (point.x + 100) || eX <= (point.x - 100))
+                                        || (eY >= (point.y + 100) || eY <= (point.y - 100))) {
+                                    random.nextInt();
+                                    point.x = event.getX(i);
+                                    point.y = event.getY(i);
+                                    balls.addLast(new ball(point.x, point.y, rand, radius));
+                                    undoStack.push(new Painted(point.x, point.y, rand, radius));
+                                }
+
+                            }
+                            if (pointerID == 4) {
+                                if ((eX >= (point.x + 100) || eX <= (point.x - 100))
+                                        || (eY >= (point.y + 100) || eY <= (point.y - 100))) {
+                                    random.nextInt();
+                                    point.x = event.getX(i);
+                                    point.y = event.getY(i);
+                                    balls.addLast(new ball(point.x, point.y, rand, radius));
+                                    undoStack.push(new Painted(point.x, point.y, rand, radius));
+                                }
+
                             }
                         }
                     }
+
                 break;
             }
             case MotionEvent.ACTION_UP:
